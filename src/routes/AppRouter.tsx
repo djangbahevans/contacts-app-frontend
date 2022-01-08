@@ -1,9 +1,6 @@
-import { createBrowserHistory } from "history"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { PublicRoute } from "."
 import { LoginPage, SignupPage } from "../pages"
-
-const history = createBrowserHistory()
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -16,4 +13,4 @@ const AppRouter = () => (
   </BrowserRouter>
 )
 
-export { AppRouter, history }
+export { AppRouter }
