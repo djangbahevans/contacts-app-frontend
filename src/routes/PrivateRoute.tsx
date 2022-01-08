@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom"
 
-export type PrivateRouteProps = {
+interface PrivateRouteProps {
     isAuthenticated?: boolean;
     children: JSX.Element
 }
