@@ -70,7 +70,7 @@ const LoginPage = () => {
                             fullWidth>
                             Login
                         </Button>
-                        <Button sx={{ marginTop: '5px' }} variant="text" fullWidth>Don't have an account?</Button>
+                        <Button href="/signup" sx={{ marginTop: '5px' }} variant="text" fullWidth>Don't have an account?</Button>
                     </Grid>
                 </Grid>
             </Box>
