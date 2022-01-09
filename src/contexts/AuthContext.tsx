@@ -36,22 +36,21 @@ const useAuth = () => {
     const token = localStorage.getItem("access_token")
     if (!token) return
 
-    fetch("http://127.0.0.1:8000/users", {
-      method: 'get',
-      mode: 'cors',
-      headers: {
-        "Authorization": `Bearer ${token}`
-      }
-    })
-      .then(response => response.json())
-      .then((data: IUser) => {
-        console.log(data)
+    (async () => {
+      const response = await fetch("http://127.0.0.1:8000/users", {
+        method: 'get',
+        mode: 'cors',
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      })
+      const data: IUser = await response.json()
+      if (response.status === 200)
         setAuthInfo({
           isAuthenticated: true,
           user: data
         })
-      })
-      .catch(e => console.log(e))
+    })()
   }, [])
 
   return {
