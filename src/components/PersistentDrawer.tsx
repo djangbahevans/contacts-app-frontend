@@ -1,13 +1,14 @@
 import { Add, ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { Box, CssBaseline, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
+import { ReactNode } from 'react';
 
 const drawerWidth = 240;
 
-interface DrawerProps {
+interface IDrawerProps {
   open?: boolean;
   handleDrawerClose: () => void;
-  children?: JSX.Element[]
+  children?: ReactNode
 }
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })<{
@@ -39,7 +40,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
-const PersistentDrawer = ({ open, handleDrawerClose, children }: DrawerProps) => {
+const PersistentDrawer = ({ open, handleDrawerClose, children }: IDrawerProps) => {
   const theme = useTheme();
 
   return (
