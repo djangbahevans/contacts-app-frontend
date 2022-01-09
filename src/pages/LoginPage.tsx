@@ -1,10 +1,13 @@
 import { Box, Button, Grid, TextField, Typography } from "@mui/material"
 import { useState } from "react"
+import { useAuth } from "../contexts"
 
 const LoginPage = () => {
-    let [email, setEmail] = useState("")
-    let [password, setPassword] = useState("")
-    let [error, setError] = useState("")
+    let [email, setEmail] = useState<string>("")
+    let [password, setPassword] = useState<string>("")
+    let [error, setError] = useState<string>("")
+
+    const { login } = useAuth()
 
     return (
         <div style={{ position: 'relative', height: '100vh' }}>
@@ -57,25 +60,11 @@ const LoginPage = () => {
                             onClick={async () => {
                                 if (!email)
                                     return
-                                let formBody: any = [];
-                                formBody.push(`${encodeURIComponent("username")}=${encodeURIComponent(email)}`)
-                                formBody.push(`${encodeURIComponent("password")}=${encodeURIComponent(password)}`)
-                                formBody = formBody.join('&')
-
                                 try {
-                                    const response = await fetch('http://127.0.0.1:8000/login', {
-                                        method: 'post',
-                                        mode: 'cors',
-                                        headers: {
-                                            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-                                        },
-                                        body: formBody
-                                    })
-                                    const data = await response.json()
-                                    if (data.access_token) localStorage.setItem("token", data.access_token)
-                                    else setError(data.detail)
-                                } catch (e: any) {
-                                    setError(e.message)
+                                    const { access_token } = await login(email, password)
+                                    localStorage.setItem("access_token", access_token)
+                                } catch (error: any) {
+                                    setError(error.detail)
                                 }
                             }}
                             fullWidth>

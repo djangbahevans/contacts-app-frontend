@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import { AuthProvider } from './contexts';
 import { AppRouter } from './routes';
 
 
@@ -7,7 +8,9 @@ import { AppRouter } from './routes';
 function App() {
   return (
     <div className="App">
-      <AppRouter />
+      <AuthProvider>
+        <AppRouter />
+      </AuthProvider>
     </div>
   );
 }
