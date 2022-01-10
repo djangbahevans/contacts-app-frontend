@@ -35,12 +35,14 @@ const useAuth = () => {
   const [authInfo, setAuthInfo] = useState<{ isAuthenticated: boolean, loading: boolean, user?: IUser }>({ isAuthenticated: false, loading: true })
 
   console.log(`${process.env.REACT_APP_API_URL}`)
+
   useEffect(() => {
+    console.log("Inside useEffect")
     const token = localStorage.getItem("access_token")
     if (!token) return
-    
 
     (async () => {
+      console.log("Making request")
       const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
         method: 'get',
         mode: 'cors',
@@ -48,6 +50,7 @@ const useAuth = () => {
           "Authorization": `Bearer ${token}`
         }
       })
+      console.log("Received response")
       const data: IUser = await response.json()
       if (response.status === 200)
         setAuthInfo({
@@ -60,6 +63,7 @@ const useAuth = () => {
           isAuthenticated: false,
           loading: false
         })
+      console.log("Done!")
     })()
   }, [])
 
