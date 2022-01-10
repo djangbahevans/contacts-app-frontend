@@ -1,5 +1,3 @@
-import React from 'react';
-import './App.css';
 import { AuthProvider } from './contexts';
 import { AppRouter } from './routes';
 
