@@ -39,7 +39,10 @@ const useAuth = () => {
   useEffect(() => {
     console.log("Inside useEffect")
     const token = localStorage.getItem("access_token")
-    if (!token) return
+    if (!token) {
+      setAuthInfo({ isAuthenticated: false, loading: false })
+      return
+    }
 
     (async () => {
       console.log("Making request")
