@@ -12,7 +12,8 @@ const SignupPage = () => {
     return (
         <div style={{ position: 'relative', height: '100vh' }}>
             <Box sx={{
-                width: '400px',
+                maxWidth: '400px',
+                minWidth: '250px',
                 position: 'absolute',
                 left: '50%',
                 top: '50%',
@@ -25,7 +26,7 @@ const SignupPage = () => {
                     <Grid item xs={12}>
                         <Typography color="error">{error}</Typography>
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6}>
                         <TextField
                             label="First name"
                             variant="outlined"
@@ -37,7 +38,7 @@ const SignupPage = () => {
                             required
                             fullWidth />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6}>
                         <TextField
                             label="Last name"
                             variant="outlined"
@@ -49,7 +50,7 @@ const SignupPage = () => {
                             required
                             fullWidth />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} sm={12}>
                         <TextField
                             label="Email"
                             variant="outlined"
@@ -62,7 +63,7 @@ const SignupPage = () => {
                             fullWidth
                         />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6}>
                         <TextField
                             label="Password"
                             variant="outlined"
@@ -75,7 +76,7 @@ const SignupPage = () => {
                             fullWidth
                         />
                     </Grid>
-                    <Grid item xs={6}>
+                    <Grid item xs={12} sm={6}>
                         <TextField
                             label="Confirm Password"
                             variant="outlined"
@@ -88,7 +89,7 @@ const SignupPage = () => {
                             fullWidth
                         />
                     </Grid>
-                    <Grid item xs={12}>
+                    <Grid item xs={12} sm={12}>
                         <Button
                             variant="contained"
                             disabled={!firstName || !lastName || !email || !password || !confirmPassword}

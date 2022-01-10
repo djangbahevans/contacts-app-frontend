@@ -12,7 +12,8 @@ const LoginPage = () => {
     return (
         <div style={{ position: 'relative', height: '100vh' }}>
             <Box sx={{
-                width: '400px',
+                maxWidth: '400px',
+                minWidth: '250px',
                 position: 'absolute',
                 left: '50%',
                 top: '50%',
