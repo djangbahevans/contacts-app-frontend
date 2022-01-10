@@ -2,6 +2,7 @@ import { Add, ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { Box, CssBaseline, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import { ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -42,6 +43,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 const PersistentDrawer = ({ open, handleDrawerClose, children }: IDrawerProps) => {
   const theme = useTheme();
+  const navigate = useNavigate()
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -66,7 +68,7 @@ const PersistentDrawer = ({ open, handleDrawerClose, children }: IDrawerProps) =
         </DrawerHeader>
         <Divider />
         <List>
-          <ListItem button>
+          <ListItem button onClick={() => { navigate("/contact/create") }}>
             <ListItemIcon>
               <Add />
             </ListItemIcon>

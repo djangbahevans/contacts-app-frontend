@@ -1,3 +1,4 @@
+export * from './ContactCreatePage'
 export * from './ContactViewPage'
 export * from './HomePage'
 export * from './LoginPage'
