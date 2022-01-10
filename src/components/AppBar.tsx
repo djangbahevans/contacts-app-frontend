@@ -1,8 +1,9 @@
-import { AccountCircle, Mail as MailIcon, Menu as MenuIcon, MoreVert as MoreIcon, Notifications as NotificationsIcon, Search as SearchIcon, Settings as SettingsIcon, Help as HelpIcon } from '@mui/icons-material';
-import { Badge, Box, IconButton, InputBase, Menu, MenuItem, Toolbar, Typography } from '@mui/material';
-import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar"
+import { Help as HelpIcon, Logout, Menu as MenuIcon, MoreVert as MoreIcon, Search as SearchIcon, Settings as SettingsIcon } from '@mui/icons-material';
+import { Box, IconButton, InputBase, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
+import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import { alpha, styled } from '@mui/material/styles';
 import * as React from 'react';
+import { useAuth } from '../contexts';
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean
@@ -69,51 +70,19 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 const PrimarySearchAppBar = ({ handleMenuClick, open }: AppBarProps) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const { logout } = useAuth()
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
 
-  const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
-
-  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
 
   const handleMobileMenuClose = () => {
     setMobileMoreAnchorEl(null);
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMobileMenuClose();
-  };
-
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
-
-  const menuId = 'primary-search-account-menu';
-  const renderMenu = (
-    <Menu
-      anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      id={menuId}
-      keepMounted
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'right',
-      }}
-      open={isMenuOpen}
-      onClose={handleMenuClose}
-    >
-      <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-      <MenuItem onClick={handleMenuClose}>My account</MenuItem>
-    </Menu>
-  );
 
   const mobileMenuId = 'primary-search-account-menu-mobile';
   const renderMobileMenu = (
@@ -133,36 +102,39 @@ const PrimarySearchAppBar = ({ handleMenuClick, open }: AppBarProps) => {
       onClose={handleMobileMenuClose}
     >
       <MenuItem>
-        <IconButton size="large" aria-label="show 4 new mails" color="inherit">
-          <Badge badgeContent={4} color="error">
-            <MailIcon />
-          </Badge>
+        <IconButton
+          size="large"
+          aria-label="show help menu"
+          color="inherit"
+        >
+          <HelpIcon />
         </IconButton>
-        <p>Messages</p>
+        <p>Help</p>
       </MenuItem>
       <MenuItem>
         <IconButton
           size="large"
-          aria-label="show 17 new notifications"
-          color="inherit"
-        >
-          <Badge badgeContent={17} color="error">
-            <NotificationsIcon />
-          </Badge>
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          size="large"
-          aria-label="account of current user"
+          aria-label="show settings"
           aria-controls="primary-search-account-menu"
           aria-haspopup="true"
           color="inherit"
         >
-          <AccountCircle />
+          <SettingsIcon />
         </IconButton>
-        <p>Profile</p>
+        <p>Settings</p>
+      </MenuItem>
+      <MenuItem>
+        <IconButton
+          size="large"
+          aria-label="log out"
+          aria-controls="primary-search-account-menu"
+          aria-haspopup="true"
+          color="inherit"
+          onClick={logout}
+        >
+          <Logout />
+        </IconButton>
+        <p>Log out</p>
       </MenuItem>
     </Menu>
   );
@@ -176,7 +148,7 @@ const PrimarySearchAppBar = ({ handleMenuClick, open }: AppBarProps) => {
             edge="start"
             color="inherit"
             aria-label="open drawer"
-            sx={{ mr: 2}}
+            sx={{ mr: 2 }}
             onClick={handleMenuClick}
           >
             <MenuIcon />
@@ -200,16 +172,30 @@ const PrimarySearchAppBar = ({ handleMenuClick, open }: AppBarProps) => {
           </Search>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <IconButton size="large" aria-label="show help menu" color="inherit">
-              <HelpIcon />
-            </IconButton>
-            <IconButton
-              size="large"
-              aria-label="show settings"
-              color="inherit"
-            >
-              <SettingsIcon />
-            </IconButton>
+            <Tooltip title="Help">
+              <IconButton size="large" aria-label="show help menu" color="inherit">
+                <HelpIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Settings">
+              <IconButton
+                size="large"
+                aria-label="show settings"
+                color="inherit"
+              >
+                <SettingsIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Log out">
+              <IconButton
+                size="large"
+                aria-label="logout"
+                color="inherit"
+                onClick={logout}
+              >
+                <Logout />
+              </IconButton>
+            </Tooltip>
           </Box>
           <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
             <IconButton
@@ -226,7 +212,6 @@ const PrimarySearchAppBar = ({ handleMenuClick, open }: AppBarProps) => {
         </Toolbar>
       </AppBar>
       {renderMobileMenu}
-      {renderMenu}
     </Box>
   );
 }
