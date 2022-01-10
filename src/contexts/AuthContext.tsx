@@ -34,9 +34,11 @@ const authContext = createContext<IAuthContext>(authContextDefaults)
 const useAuth = () => {
   const [authInfo, setAuthInfo] = useState<{ isAuthenticated: boolean, loading: boolean, user?: IUser }>({ isAuthenticated: false, loading: true })
 
+  console.log(`${process.env.REACT_APP_API_URL}`)
   useEffect(() => {
     const token = localStorage.getItem("access_token")
     if (!token) return
+    
 
     (async () => {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
