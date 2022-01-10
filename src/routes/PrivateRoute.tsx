@@ -1,4 +1,5 @@
 import { Navigate } from "react-router-dom"
+import { Loading } from "../components"
 import { useAuth } from "../contexts"
 
 interface IPrivateRouteProps {
@@ -6,9 +7,13 @@ interface IPrivateRouteProps {
 }
 
 const PrivateRoute = ({ children }: IPrivateRouteProps) => {
-    const { isAuthenticated } = useAuth()
-    
-    return (isAuthenticated) ? children : <Navigate to="/login" />
+    const { isAuthenticated, loading } = useAuth()
+
+    return loading ?
+        <Loading /> :
+        (isAuthenticated) ?
+            children :
+            <Navigate to="/login" />
 }
 
 export { PrivateRoute }

@@ -1,4 +1,5 @@
 import { Navigate } from "react-router-dom"
+import { Loading } from "../components"
 import { useAuth } from "../contexts"
 
 interface PublicRouteProps {
@@ -7,9 +8,13 @@ interface PublicRouteProps {
 }
 
 const PublicRoute = ({ children }: PublicRouteProps) => {
-    const { isAuthenticated } = useAuth()
+    const { isAuthenticated, loading } = useAuth()
 
-    return isAuthenticated ? <Navigate to="/" /> : children
+    return loading ?
+        <Loading /> :
+        isAuthenticated ?
+            <Navigate to="/" /> :
+            children
 }
 
 export { PublicRoute }

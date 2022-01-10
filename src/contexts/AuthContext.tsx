@@ -9,6 +9,7 @@ interface IUser {
 
 interface IAuthContext {
   isAuthenticated: boolean;
+  loading: boolean;
   user?: IUser;
   login: (email: string, password: string) => Promise<ILogin>
   logout: () => void
@@ -22,6 +23,7 @@ interface ILogin {
 
 const authContextDefaults: IAuthContext = {
   isAuthenticated: false,
+  loading: false,
   login: (email: string, password: string) => new Promise<ILogin>(() => { }),
   logout: (): void => { }
 }
@@ -30,7 +32,7 @@ const authContextDefaults: IAuthContext = {
 const authContext = createContext<IAuthContext>(authContextDefaults)
 
 const useAuth = () => {
-  const [authInfo, setAuthInfo] = useState<{ isAuthenticated: boolean, user?: IUser }>({ isAuthenticated: false })
+  const [authInfo, setAuthInfo] = useState<{ isAuthenticated: boolean, loading: boolean, user?: IUser }>({ isAuthenticated: false, loading: true })
 
   useEffect(() => {
     const token = localStorage.getItem("access_token")
@@ -48,7 +50,13 @@ const useAuth = () => {
       if (response.status === 200)
         setAuthInfo({
           isAuthenticated: true,
+          loading: false,
           user: data
+        })
+      else
+        setAuthInfo({
+          isAuthenticated: false,
+          loading: false
         })
     })()
   }, [])
@@ -75,6 +83,7 @@ const useAuth = () => {
           if (response.status === 200) {
             setAuthInfo({
               isAuthenticated: true,
+              loading: false,
               ...data
             })
             resolve(data)
@@ -87,7 +96,7 @@ const useAuth = () => {
     },
     logout: () => {
       localStorage.removeItem("access_token")
-      setAuthInfo({ isAuthenticated: false })
+      setAuthInfo({ isAuthenticated: false, loading: false })
     }
   };
 }
