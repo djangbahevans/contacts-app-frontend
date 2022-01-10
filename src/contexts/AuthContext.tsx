@@ -39,7 +39,7 @@ const useAuth = () => {
     if (!token) return
 
     (async () => {
-      const response = await fetch("http://127.0.0.1:8000/users", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
         method: 'get',
         mode: 'cors',
         headers: {
@@ -71,7 +71,7 @@ const useAuth = () => {
         formBody = formBody.join('&')
 
         try {
-          const response = await fetch('http://127.0.0.1:8000/login', {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/login`, {
             method: 'post',
             mode: 'cors',
             headers: {

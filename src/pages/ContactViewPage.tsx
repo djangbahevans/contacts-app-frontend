@@ -19,7 +19,7 @@ const ContactViewPage = () => {
 
   useEffect(() => {
     (async () => {
-      const response = await fetch(`http://localhost:8000/contacts/${id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/contacts/${id}`, {
         method: "get",
         mode: "cors",
         headers: {
@@ -43,7 +43,7 @@ const ContactViewPage = () => {
   const deleteHandler = async () => {
     try {
 
-      const response = await fetch(`http://127.0.0.1:8000/contacts/${id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/contacts/${id}`, {
         method: "delete",
         mode: "cors",
         headers: {

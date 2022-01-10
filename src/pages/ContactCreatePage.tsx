@@ -62,7 +62,7 @@ const ContactCreatePage = () => {
 
   const saveHandler = async () => {
     try {
-      const response = await fetch(`http://127.0.0.1:8000/contacts/`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/contacts/`, {
         method: "post",
         mode: "cors",
         headers: {
@@ -194,7 +194,6 @@ const ContactCreatePage = () => {
                         variant="standard"
                         onChange={e => {
                           const value = e.target.value
-                          console.log(value)
                           let gender: "male" | "female" | "" = ""
                           if (value === "male") gender = "male"
                           else if (value === "female") gender = "female"

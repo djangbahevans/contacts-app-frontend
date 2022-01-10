@@ -98,7 +98,7 @@ const SignupPage = () => {
                                 if (password !== confirmPassword) return setError("Passwords do not match")
 
                                 try {
-                                    const response = await fetch('http://127.0.0.1:8000/users', {
+                                    const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
                                         method: 'post',
                                         mode: 'cors',
                                         headers: {

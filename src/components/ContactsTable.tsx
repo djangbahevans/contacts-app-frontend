@@ -140,7 +140,7 @@ export default function ContactsTable() {
 
   useEffect(() => {
     (async () => {
-      const response = await fetch("http://127.0.0.1:8000/contacts", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/contacts`, {
         method: 'get',
         mode: "cors",
         // cache: "no-cache",
@@ -149,7 +149,6 @@ export default function ContactsTable() {
         }
       })
       const data: IContact[] = await response.json()
-      console.log(data)
 
       setRows(data)
     })()
