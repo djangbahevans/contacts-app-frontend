@@ -6,7 +6,7 @@ export type IContact = {
   name_prefix?: string
   name_suffix?: string
   birthday?: string
-  gender?: string
+  gender?: "male" | "female"
   location?: string
   occupation?: string
   notes?: string
