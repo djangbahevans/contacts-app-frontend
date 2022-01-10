@@ -41,17 +41,26 @@ const ContactViewPage = () => {
   }
 
   const deleteHandler = async () => {
-    const response = await fetch(`http://127.0.0.1:8000/contacts/${id}`, {
-      method: "delete",
-      mode: "cors",
-      headers: {
-        "authorization": `Bearer ${token}`
-      }
-    })
-    if (response.status === 204)
-      navigate(-1)
+    try {
 
-    console.log("Could not delete contact for some reason")
+      const response = await fetch(`http://127.0.0.1:8000/contacts/${id}`, {
+        method: "delete",
+        mode: "cors",
+        headers: {
+          "authorization": `Bearer ${token}`
+        }
+      })
+      if (response.status === 204)
+        navigate(-1)
+      else {
+        const data = await response.json()
+        // TODO: Add visible error to screen
+        alert(data.detail)
+      }
+    }
+    catch (e: any) {
+      alert(e.message)
+    }
   }
 
   return (
