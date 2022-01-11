@@ -105,7 +105,7 @@ const ContactEditPage = () => {
       <PersistentDrawer handleDrawerClose={handleDrawerClose} open={open}>
         <Box sx={{ my: 3 }}>
           <Grid container alignItems="center">
-            <Grid item alignSelf="flex-start" xs={1}>
+            <Grid item alignSelf="flex-start" xs={1} sm={1}>
               <Tooltip title="Go back">
                 <IconButton aria-label="back" onClick={() => navigate(-1)}>
                   <ArrowBack />
@@ -113,14 +113,14 @@ const ContactEditPage = () => {
               </Tooltip>
             </Grid>
 
-            <Grid item xs={2}>
+            <Grid item xs={10} sm={3}>
               {(() => {
                 const avatarSize = 150
-                return <Avatar sx={{ width: avatarSize, height: avatarSize, fontSize: avatarSize - avatarSize / 3 }} />
+                return <Avatar sx={{ width: avatarSize, height: avatarSize, fontSize: avatarSize - avatarSize / 3, margin: "auto" }} />
               })()}
             </Grid>
 
-            <Grid item xs={1}>
+            <Grid item alignSelf="flex-start" xs={1} sm={1}>
               <Tooltip title="Save contact">
                 <IconButton aria-label="save contact" onClick={saveHandler}>
                   <Save />
@@ -136,7 +136,7 @@ const ContactEditPage = () => {
             <Grid container>
 
               <Grid item container xs={12} sx={{ my: 1 }}>
-                <Grid item xs={2}>
+                <Grid item xs={2} sx={{ top: 2.6 * 8, position: "relative" }}>
                   <Person color="action" />
                 </Grid>
                 <Grid container item xs={10}>
@@ -164,7 +164,7 @@ const ContactEditPage = () => {
               </Grid>
 
               <Grid item container xs={12} sx={{ my: 1 }}>
-                <Grid item xs={2}>
+                <Grid item xs={2} sx={{ top: 2.6 * 8, position: "relative" }}>
                   <Phone color="action" />
                 </Grid>
                 <Grid container item xs={10}>
@@ -180,7 +180,7 @@ const ContactEditPage = () => {
               </Grid>
 
               <Grid item container xs={12} sx={{ my: 1 }}>
-                <Grid item xs={2}>
+                <Grid item xs={2} sx={{ top: 2.6 * 8, position: "relative" }}>
                   <Wc color="action" />
                 </Grid>
                 <Grid container item xs={10}>
@@ -209,7 +209,7 @@ const ContactEditPage = () => {
               </Grid>
 
               <Grid item container xs={12} sx={{ my: 1 }}>
-                <Grid item xs={2}>
+                <Grid item xs={2} sx={{ top: 2.6 * 8, position: "relative" }}>
                   <Email color="action" />
                 </Grid>
                 <Grid container item xs={10}>
@@ -222,7 +222,7 @@ const ContactEditPage = () => {
               </Grid>
 
               <Grid item container xs={12} sx={{ my: 1 }}>
-                <Grid item xs={2}>
+                <Grid item xs={2} sx={{ top: 2.6 * 8, position: "relative" }}>
                   <LocationOn color="action" />
                 </Grid>
                 <Grid container item xs={10}>
@@ -234,7 +234,7 @@ const ContactEditPage = () => {
               </Grid>
 
               <Grid item container xs={12} sx={{ my: 1 }}>
-                <Grid item xs={2}>
+                <Grid item xs={2} sx={{ top: 2.6 * 8, position: "relative" }}>
                   <CalendarToday color="action" />
                 </Grid>
                 <Grid container item xs={10}>
@@ -246,7 +246,7 @@ const ContactEditPage = () => {
               </Grid>
 
               <Grid item container xs={12} sx={{ my: 1 }}>
-                <Grid item xs={2}>
+                <Grid item xs={2} sx={{ top: 2.6 * 8, position: "relative" }}>
                   <Work color="action" />
                 </Grid>
                 <Grid container item xs={10}>
@@ -262,7 +262,7 @@ const ContactEditPage = () => {
               </Grid>
 
               <Grid item container xs={12} sx={{ my: 1 }}>
-                <Grid item xs={2}>
+                <Grid item xs={2} sx={{ top: 2.6 * 8, position: "relative" }}>
                   <Language color="action" />
                 </Grid>
                 <Grid container item xs={10}>
@@ -274,7 +274,7 @@ const ContactEditPage = () => {
               </Grid>
 
               <Grid item container xs={12} sx={{ my: 1 }}>
-                <Grid item xs={2}>
+                <Grid item xs={2} sx={{ top: 2.6 * 8, position: "relative" }}>
                   <Note color="action" />
                 </Grid>
                 <Grid container item xs={10}>
