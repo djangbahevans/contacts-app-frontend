@@ -17,7 +17,7 @@ const ContactRow = ({ contact, isSelected, handleClick }: IContactRowProps) => {
   return (
     <TableRow
       hover
-      onClick={() => navigate(`/contact/${contact.id}`)}
+      onClick={() => navigate(`/person/${contact.id}`)}
       role="checkbox"
       aria-checked={isSelected}
       tabIndex={-1}

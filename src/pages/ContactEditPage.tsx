@@ -90,7 +90,7 @@ const ContactEditPage = () => {
       })
       const data = await response.json()
       if (response.status === 200)
-        navigate(`/contact/${data.id}`)
+        navigate(`/person/${data.id}`)
       else
         // TODO: Add visible error to screen
         alert(data.detail)

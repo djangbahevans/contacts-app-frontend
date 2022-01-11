@@ -68,7 +68,7 @@ const PersistentDrawer = ({ open, handleDrawerClose, children }: IDrawerProps) =
         </DrawerHeader>
         <Divider />
         <List>
-          <ListItem button onClick={() => { navigate("/contact/create") }}>
+          <ListItem button onClick={() => { navigate("/new") }}>
             <ListItemIcon>
               <Add />
             </ListItemIcon>

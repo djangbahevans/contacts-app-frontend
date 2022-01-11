@@ -93,7 +93,7 @@ const ContactViewPage = () => {
 
             <Grid item xs={1}>
               <Tooltip title="Edit">
-                <IconButton aria-label="edit">
+                <IconButton aria-label="edit" onClick={() => navigate(`/edit/${id}`)}>
                   <Edit />
                 </IconButton>
               </Tooltip>
