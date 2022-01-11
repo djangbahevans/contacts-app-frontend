@@ -1,6 +1,6 @@
 import { ArrowBack, CalendarToday, Delete, Edit, Email, Language, LocationOn, Man, Note, Phone, Woman, Work } from "@mui/icons-material"
-import { Avatar, Divider, Grid, IconButton, Link, Tooltip, Typography } from "@mui/material"
-import { Box } from "@mui/system"
+import { Avatar, Divider, Grid, IconButton, Link, Theme, Tooltip, Typography } from "@mui/material"
+import { Box, SxProps } from "@mui/system"
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { PersistentDrawer, PrimarySearchAppBar } from "../components"
@@ -69,7 +69,7 @@ const ContactViewPage = () => {
       <PersistentDrawer handleDrawerClose={handleDrawerClose} open={open}>
         <Box sx={{ my: 3 }}>
           <Grid container alignItems="center">
-            <Grid item alignSelf="flex-start" xs={1}>
+            <Grid item alignSelf="flex-start" xs={1} sm={1} order={{ xs: 1, sm: 1 }}>
               <Tooltip title="Go back">
                 <IconButton aria-label="back" onClick={() => navigate(-1)}>
                   <ArrowBack />
@@ -77,21 +77,29 @@ const ContactViewPage = () => {
               </Tooltip>
             </Grid>
 
-            <Grid item xs={2}>
+            <Grid item xs={9} sm={9} md={2} order={{ xs: 2, sm: 2 }}>
               {(() => {
                 const avatarSize = 150
+                const sx = { width: avatarSize, height: avatarSize, fontSize: avatarSize - avatarSize / 3, margin: "auto" }
                 if (contact?.photo)
                   return <Avatar alt={name} src={contact?.photo} />
-                return <Avatar sx={{ width: avatarSize, height: avatarSize, fontSize: avatarSize - avatarSize / 3 }}>{name[0]}</Avatar>
+                return <Avatar sx={sx}>{name[0]}</Avatar>
               })()}
             </Grid>
 
-            <Grid container item xs={3} spacing={1}>
-              <Grid item xs={12}><Typography variant="h5">{name}</Typography></Grid>
-              <Grid item xs={12}>{contact?.gender ? <Man color="action" fontSize="large" /> : <Woman color="action" fontSize="large" />}</Grid>
+            <Grid container item xs={12} sm={12} md={3} spacing={1} order={{ xs: 5, sm: 5, md: 3 }}>
+              <Grid item xs={12}><Typography variant="h5" textAlign="center">{name}</Typography></Grid>
+              <Grid item xs={12} sx={{ textAlign: "center" }}>{
+                (() => {
+                  const sx: SxProps<Theme> = { textAlign: "center" }
+                  if (!contact?.gender)
+                    return
+                  return contact?.gender === "male" ? <Man color="action" fontSize="large" sx={sx} /> : <Woman color="action" fontSize="large" sx={sx} />
+                })()
+              }</Grid>
             </Grid>
 
-            <Grid item xs={1}>
+            <Grid item alignSelf="flex-start" xs={1} sm={1} order={{ xs: 3, sm: 3, md: 4 }}>
               <Tooltip title="Edit">
                 <IconButton aria-label="edit" onClick={() => navigate(`/edit/${id}`)}>
                   <Edit />
@@ -99,7 +107,7 @@ const ContactViewPage = () => {
               </Tooltip>
             </Grid>
 
-            <Grid item xs={1}>
+            <Grid item alignSelf="flex-start" xs={1} sm={1} order={{ xs: 4, sm: 4, md: 5 }}>
               <Tooltip title="Delete">
                 <IconButton aria-label="delete" onClick={deleteHandler}>
                   <Delete />
