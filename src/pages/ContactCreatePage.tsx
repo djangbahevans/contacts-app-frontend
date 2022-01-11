@@ -5,6 +5,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { ClearTextField, PersistentDrawer, PrimarySearchAppBar } from "../components"
 import { IContactCreate } from "../utils/sharedInterfaces"
+import { randomMaterialColor } from "../utils/utilityFunctions"
 
 
 const ContactCreatePage = () => {
@@ -97,7 +98,8 @@ const ContactCreatePage = () => {
             <Grid item xs={10} sm={3}>
               {(() => {
                 const avatarSize = 150
-                return <Avatar sx={{ width: avatarSize, height: avatarSize, fontSize: avatarSize - avatarSize / 3, margin: "auto" }} />
+                const color = randomMaterialColor()
+                return <Avatar sx={{ width: avatarSize, height: avatarSize, fontSize: avatarSize - avatarSize / 3, margin: "auto", bgcolor: color }} />
               })()}
             </Grid>
 

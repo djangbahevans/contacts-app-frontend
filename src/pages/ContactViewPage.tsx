@@ -5,6 +5,8 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { PersistentDrawer, PrimarySearchAppBar } from "../components"
 import { IContact } from "../utils/sharedInterfaces"
+import { randomMaterialColor } from "../utils/utilityFunctions"
+
 
 const ContactViewPage = () => {
   const { id } = useParams()
@@ -80,7 +82,8 @@ const ContactViewPage = () => {
             <Grid item xs={9} sm={9} md={2} order={{ xs: 2, sm: 2 }}>
               {(() => {
                 const avatarSize = 150
-                const sx = { width: avatarSize, height: avatarSize, fontSize: avatarSize - avatarSize / 3, margin: "auto" }
+                const color = randomMaterialColor()
+                const sx = { width: avatarSize, height: avatarSize, fontSize: avatarSize - avatarSize / 3, margin: "auto", bgcolor: color }
                 if (contact?.photo)
                   return <Avatar alt={name} src={contact?.photo} />
                 return <Avatar sx={sx}>{name[0]}</Avatar>
