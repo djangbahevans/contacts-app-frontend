@@ -1,30 +1,11 @@
-import { ArrowBack, CalendarToday, Clear, Email, Language, LocationOn, Note, Person, Phone, Save, Wc, Work } from "@mui/icons-material"
-import { Avatar, Divider, FormControl, Grid, IconButton, InputAdornment, InputLabel, MenuItem, Select, TextField, Tooltip, Typography } from "@mui/material"
-import { TextFieldProps } from "@mui/material/TextField"
+import { ArrowBack, CalendarToday, Email, Language, LocationOn, Note, Person, Phone, Save, Wc, Work } from "@mui/icons-material"
+import { Avatar, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Tooltip, Typography } from "@mui/material"
 import { Box } from "@mui/system"
-import React, { useState } from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { PersistentDrawer, PrimarySearchAppBar } from "../components"
+import { ClearTextField, PersistentDrawer, PrimarySearchAppBar } from "../components"
 import { IContactCreate } from "../utils/sharedInterfaces"
 
-type IClearTextFieldProps = {
-  onClearClick?: React.MouseEventHandler<HTMLButtonElement>
-} & TextFieldProps
-
-const ClearTextField = ({ onClearClick, ...rest }: IClearTextFieldProps) => {
-  return <TextField
-    InputProps={{
-      endAdornment: (
-        <InputAdornment position="end">
-          <IconButton onClick={onClearClick}>
-            <Clear color="action" />
-          </IconButton>
-        </InputAdornment>
-      )
-    }}
-    sx={{ maxWidth: 400 }}
-    {...rest} />
-}
 
 const ContactCreatePage = () => {
   const contactDefaults: IContactCreate = {

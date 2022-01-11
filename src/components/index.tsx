@@ -3,4 +3,4 @@ export * from './ContactRow'
 export * from './ContactsTable'
 export * from './Loading'
 export * from './PersistentDrawer'
-
+export * from './ClearTextField'
