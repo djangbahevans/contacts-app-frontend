@@ -7,6 +7,7 @@ type IClearTextFieldProps = {
 
 const ClearTextField = ({ onClearClick, ...rest }: IClearTextFieldProps) => {
   return <TextField
+    fullWidth
     InputProps={{
       endAdornment: (
         <InputAdornment position="end">
