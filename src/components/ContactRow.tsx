@@ -43,10 +43,18 @@ const ContactRow = ({ contact, isSelected, handleClick }: IContactRowProps) => {
       >
         {name}
       </TableCell>
-      <TableCell align="left">{contact.email}</TableCell>
-      <TableCell align="left">{contact.phone1 || contact.phone2}</TableCell>
-      <TableCell align="left">{contact.organization}</TableCell>
-      <TableCell align="left">{contact.notes}</TableCell>
+      <TableCell
+        align="left"
+        sx={{ display: { xs: "none", sm: "none", md: "table-cell", lg: "table-cell", xl: "table-cell" } }} >{contact.email}</TableCell>
+      <TableCell
+        align="left"
+        sx={{ display: { xs: "none", sm: "none", md: "none", lg: "table-cell", xl: "table-cell" } }} >{contact.phone1 || contact.phone2}</TableCell>
+      <TableCell
+        align="left"
+        sx={{ display: { xs: "none", sm: "none", md: "none", lg: "none", xl: "table-cell" } }} >{contact.organization}</TableCell>
+      <TableCell
+        align="left"
+        sx={{ display: { xs: "none", sm: "none", md: "none", lg: "none", xl: "table-cell" } }} >{contact.notes}</TableCell>
       <TableCell align="left"></TableCell>
     </TableRow>
   )

@@ -17,7 +17,6 @@ interface IContactsTableToolbarProps {
 }
 
 interface IHeadCell {
-  disablePadding: boolean;
   id: keyof IContact;
   label: string;
 }
@@ -25,27 +24,22 @@ interface IHeadCell {
 const headCells: readonly IHeadCell[] = [
   {
     id: 'given_name',
-    disablePadding: true,
     label: 'Name',
   },
   {
     id: 'email',
-    disablePadding: false,
     label: 'Email',
   },
   {
     id: 'phone1',
-    disablePadding: false,
     label: 'Phone Number',
   },
   {
     id: 'organization',
-    disablePadding: false,
     label: 'Job',
   },
   {
     id: 'notes',
-    disablePadding: false,
     label: 'Notes',
   },
 ];
@@ -68,15 +62,55 @@ function ContactsTableHead(props: IContactsTableProps) {
             }}
           />
         </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align="left"
-            padding='normal'
-          >
-            {headCell.label}
-          </TableCell>
-        ))}
+        <TableCell
+          align="left"
+          padding='normal'
+        >
+          Name
+        </TableCell>
+        <TableCell
+          align="left"
+          padding='normal'
+          sx={{ display: { xs: "none", sm: "none", md: "table-cell", lg: "table-cell", xl: "table-cell" } }}
+        >
+          Email
+        </TableCell>
+        <TableCell
+          align="left"
+          padding='normal'
+          sx={{ display: { xs: "none", sm: "none", md: "none", lg: "table-cell", xl: "table-cell" } }}
+        >
+          Phone Number
+        </TableCell>
+        <TableCell
+          align="left"
+          padding='normal'
+          sx={{ display: { xs: "none", sm: "none", md: "none", lg: "none", xl: "table-cell" } }}
+        >
+          Organization
+        </TableCell>
+        <TableCell
+          align="left"
+          padding='normal'
+          sx={{ display: { xs: "none", sm: "none", md: "none", lg: "none", xl: "table-cell" } }}
+        >
+          Notes
+        </TableCell>
+        {/* {headCells.map((headCell) => {
+          let sx;
+          if (headCell.id in ["phone1", "organization", "notes"])
+            sx = {}
+          return (
+            <TableCell
+              key={headCell.id}
+              align="left"
+              padding='normal'
+              sx={{ display: "table-cell" }}
+            >
+              {headCell.label}
+            </TableCell>
+          )
+        })} */}
       </TableRow>
     </TableHead>
   );
@@ -143,7 +177,6 @@ export default function ContactsTable() {
       const response = await fetch(`${process.env.REACT_APP_API_URL}/contacts`, {
         method: 'get',
         mode: "cors",
-        // cache: "no-cache",
         headers: {
           "authorization": `Bearer ${localStorage.getItem("access_token")}`
         }
@@ -204,7 +237,7 @@ export default function ContactsTable() {
         <ContactsTableToolbar numSelected={selected.length} />
         <TableContainer>
           <Table
-            sx={{ minWidth: 750 }}
+            // sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size='medium'
           >
