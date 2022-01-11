@@ -10,7 +10,7 @@ interface IContactRowProps {
 
 const ContactRow = ({ contact, isSelected, handleClick }: IContactRowProps) => {
   const name = `${contact.name_prefix || ""} ${contact.given_name || ""} ${contact.additional_name || ""} ${contact.family_name || ""} ${contact.name_suffix || ""}`
-    .replace(/\s+/g, " ")
+    .replace(/\s+/g, " ").trim()
   const labelId = `contacts-table-checkbox-${contact.id}`
   const navigate = useNavigate()
 
