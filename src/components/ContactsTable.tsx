@@ -16,34 +16,6 @@ interface IContactsTableToolbarProps {
   numSelected: number;
 }
 
-interface IHeadCell {
-  id: keyof IContact;
-  label: string;
-}
-
-const headCells: readonly IHeadCell[] = [
-  {
-    id: 'given_name',
-    label: 'Name',
-  },
-  {
-    id: 'email',
-    label: 'Email',
-  },
-  {
-    id: 'phone1',
-    label: 'Phone Number',
-  },
-  {
-    id: 'organization',
-    label: 'Job',
-  },
-  {
-    id: 'notes',
-    label: 'Notes',
-  },
-];
-
 function ContactsTableHead(props: IContactsTableProps) {
   const { onSelectAllClick, numSelected, rowCount } =
     props;
@@ -96,21 +68,6 @@ function ContactsTableHead(props: IContactsTableProps) {
         >
           Notes
         </TableCell>
-        {/* {headCells.map((headCell) => {
-          let sx;
-          if (headCell.id in ["phone1", "organization", "notes"])
-            sx = {}
-          return (
-            <TableCell
-              key={headCell.id}
-              align="left"
-              padding='normal'
-              sx={{ display: "table-cell" }}
-            >
-              {headCell.label}
-            </TableCell>
-          )
-        })} */}
       </TableRow>
     </TableHead>
   );
