@@ -3,18 +3,18 @@ import { Loading } from "../components"
 import { useAuth } from "../contexts"
 
 interface PublicRouteProps {
-    isAuthenticated?: boolean;
-    children: JSX.Element
+  isAuthenticated?: boolean;
+  children: JSX.Element
 }
 
 const PublicRoute = ({ children }: PublicRouteProps) => {
-    const { isAuthenticated, loading } = useAuth()
+  const { isAuthenticated, loading } = useAuth()
 
-    return loading ?
-        <Loading /> :
-        isAuthenticated ?
-            <Navigate to="/" /> :
-            children
+  return loading ?
+    <Loading /> :
+    isAuthenticated ?
+      <Navigate to="/" /> :
+      children
 }
 
 export { PublicRoute }
