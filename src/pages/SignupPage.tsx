@@ -1,13 +1,69 @@
 import { Box, Button, Grid, TextField, Typography } from "@mui/material"
 import { useState } from "react"
+const approve = require("approvejs")
 
 const SignupPage = () => {
-    let [firstName, setFirstName] = useState("")
-    let [lastName, setLastName] = useState("")
-    let [email, setEmail] = useState("")
-    let [password, setPassword] = useState("")
-    let [confirmPassword, setConfirmPassword] = useState("")
-    let [error, setError] = useState("")
+    const [firstName, setFirstName] = useState("")
+    const [firstNameError, setFirstNameError] = useState("")
+    const [lastName, setLastName] = useState("")
+    const [lastNameError, setLastNameError] = useState("")
+    const [email, setEmail] = useState("")
+    const [emailError, setEmailError] = useState("")
+    const [password, setPassword] = useState("")
+    const [passwordError, setPasswordError] = useState("")
+    const [confirmPassword, setConfirmPassword] = useState("")
+    const [confirmPasswordError, setConfirmPasswordError] = useState("")
+    const [error, setError] = useState("")
+
+    const validateFirstName = () => {
+        const rules = { title: 'First name', required: true }
+        const result = approve.value(firstName, rules)
+        let value: string
+        if (!result.approved) value = result.errors[0]
+        else value = ""
+        setFirstNameError(value)
+        return value
+    }
+
+    const validateLastName = () => {
+        const rules = { title: 'Last name', required: true }
+        const result = approve.value(lastName, rules)
+        let value: string
+        if (!result.approved) value = result.errors[0]
+        else value = ""
+        setLastNameError(value)
+        return value
+    }
+
+    const validateEmail = () => {
+        const rules = { title: 'Email', required: true, email: true }
+        const result = approve.value(email, rules)
+        let value: string
+        if (!result.approved) value = result.errors[0]
+        else value = ""
+        setEmailError(value)
+        return value
+    }
+
+    const validatePassword = () => {
+        const rules = { title: 'Password', required: true, equal: { value: confirmPassword, field: 'Confirm password', message: 'Passwords do not match'}, stop: true }
+        const result = approve.value(password, rules)
+        let value: string
+        if (!result.approved) value = result.errors[0]
+        else value = ""
+        setPasswordError(value)
+        return value
+    }
+
+    const validatePasswordConfirm = () => {
+        const rules = { title: 'Confirm password', required: true, equal: { value: password, field: 'Password', message: 'Passwords do not match' }, stop: true }
+        const result = approve.value(confirmPassword, rules)
+        let value: string
+        if (!result.approved) value = result.errors[0]
+        else value = ""
+        setConfirmPasswordError(value)
+        return value
+    }
 
     return (
         <div style={{ position: 'relative', height: '100vh' }}>
@@ -31,10 +87,11 @@ const SignupPage = () => {
                             label="First name"
                             variant="outlined"
                             type="text"
-                            helperText={!firstName && "First name is required"}
+                            helperText={firstNameError}
                             onChange={e => { setFirstName(e.target.value) }}
-                            error={!firstName}
+                            error={!!firstNameError}
                             autoComplete="given-name"
+                            onBlur={validateFirstName}
                             required
                             fullWidth />
                     </Grid>
@@ -43,10 +100,11 @@ const SignupPage = () => {
                             label="Last name"
                             variant="outlined"
                             type="text"
-                            helperText={!lastName && "Last name is required"}
+                            helperText={lastNameError}
                             onChange={e => setLastName(e.target.value)}
-                            error={!lastName}
+                            error={!!lastNameError}
                             autoComplete="family-name"
+                            onBlur={validateLastName}
                             required
                             fullWidth />
                     </Grid>
@@ -55,10 +113,11 @@ const SignupPage = () => {
                             label="Email"
                             variant="outlined"
                             type="email"
-                            helperText={!email && "Email is required"}
+                            helperText={emailError}
                             onChange={(e) => { setEmail(e.target.value) }}
-                            error={!email}
+                            error={!!emailError}
                             autoComplete="email"
+                            onBlur={validateEmail}
                             required
                             fullWidth
                         />
@@ -68,10 +127,11 @@ const SignupPage = () => {
                             label="Password"
                             variant="outlined"
                             type="password"
-                            helperText={!password && "Password is required"}
+                            helperText={passwordError}
                             onChange={(e) => { setPassword(e.target.value) }}
-                            error={!password}
+                            error={!!passwordError}
                             autoComplete="new-password"
+                            onBlur={validatePassword}
                             required
                             fullWidth
                         />
@@ -81,10 +141,11 @@ const SignupPage = () => {
                             label="Confirm Password"
                             variant="outlined"
                             type="password"
-                            helperText={!confirmPassword && "Password is required"}
+                            helperText={confirmPasswordError}
                             onChange={(e) => { setConfirmPassword(e.target.value) }}
-                            error={!password}
+                            error={!!confirmPasswordError}
                             autoComplete="new-password"
+                            onBlur={validatePasswordConfirm}
                             required
                             fullWidth
                         />
@@ -92,9 +153,13 @@ const SignupPage = () => {
                     <Grid item xs={12} sm={12}>
                         <Button
                             variant="contained"
-                            disabled={!firstName || !lastName || !email || !password || !confirmPassword}
                             onClick={async () => {
-                                if (!firstName || !lastName || !email || !password || !confirmPassword) return
+                                const firstNameError = validateFirstName()
+                                const lastNameError = validateLastName()
+                                const emailError = validateEmail()
+                                const passwordError = validatePassword()
+                                const confirmPasswordError = validatePasswordConfirm()
+                                if (firstNameError || lastNameError || emailError || passwordError || confirmPasswordError) return
 
                                 if (password !== confirmPassword) return setError("Passwords do not match")
 

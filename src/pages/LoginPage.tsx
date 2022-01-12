@@ -1,13 +1,36 @@
 import { Box, Button, Grid, TextField, Typography } from "@mui/material"
 import { useState } from "react"
 import { useAuth } from "../contexts"
+const approve = require("approvejs")
 
 const LoginPage = () => {
-    let [email, setEmail] = useState<string>("")
-    let [password, setPassword] = useState<string>("")
-    let [error, setError] = useState<string>("")
+    const [email, setEmail] = useState<string>("")
+    const [emailError, setEmailError] = useState<string>("")
+    const [password, setPassword] = useState<string>("")
+    const [passwordError, setPasswordError] = useState<string>("")
+    const [error, setError] = useState<string>("")
 
     const { login } = useAuth()
+
+    const validateEmail = () => {
+        const rules = { required: true, email: true }
+        const result = approve.value(email, rules)
+        let value: string
+        if (!result.approved) value = `Email ${result.errors[0]}`
+        else value = ""
+        setEmailError(value)
+        return value
+    }
+
+    const validatePassword = () => {
+        const rules = { required: true }
+        const result = approve.value(password, rules)
+        let value: string
+        if (!result.approved) value=`Password ${result.errors[0]}`
+        else value = ""
+        setPasswordError(value)
+        return value
+    }
 
     return (
         <div style={{ position: 'relative', height: '100vh' }}>
@@ -31,11 +54,12 @@ const LoginPage = () => {
                             label="Email"
                             variant="outlined"
                             type="email"
-                            helperText={!email && "Email is required"}
+                            helperText={emailError}
                             sx={{ paddingBottom: '10px' }}
                             onChange={(e) => { setEmail(e.target.value) }}
-                            error={!email}
+                            error={!!emailError}
                             autoComplete="email"
+                            onBlur={validateEmail}
                             required
                             fullWidth
                         />
@@ -45,11 +69,12 @@ const LoginPage = () => {
                             label="Password"
                             variant="outlined"
                             type="password"
-                            helperText={!password && "Password is required"}
+                            helperText={passwordError}
                             sx={{ paddingBottom: '10px' }}
                             onChange={(e) => { setPassword(e.target.value) }}
-                            error={!password}
+                            error={!!passwordError}
                             autoComplete="current-password"
+                            onBlur={validatePassword}
                             required
                             fullWidth
                         />
@@ -57,10 +82,11 @@ const LoginPage = () => {
                     <Grid item xs={12}>
                         <Button
                             variant="contained"
-                            disabled={!email || !password}
                             onClick={async () => {
-                                if (!email)
-                                    return
+                                const emailError = validateEmail()
+                                const passwordError = validatePassword()
+                                if (passwordError || emailError) return
+                                
                                 try {
                                     const { access_token } = await login(email, password)
                                     localStorage.setItem("access_token", access_token)
