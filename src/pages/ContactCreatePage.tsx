@@ -1,7 +1,7 @@
 import { ArrowBack, CalendarToday, Email, Language, LocationOn, Note, Person, Phone, Save, Wc, Work } from "@mui/icons-material"
 import { Avatar, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Tooltip, Typography } from "@mui/material"
 import { Box } from "@mui/system"
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { ClearTextField, PersistentDrawer, PrimarySearchAppBar } from "../components"
 import { IContactCreate } from "../utils/sharedInterfaces"
@@ -31,6 +31,8 @@ const ContactCreatePage = () => {
   const [contact, setContact] = useState<IContactCreate>(contactDefaults)
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
+
+  const avatarColor = useMemo(() => randomMaterialColor(), []);
 
   const token = localStorage.getItem("access_token");
 
@@ -98,8 +100,7 @@ const ContactCreatePage = () => {
             <Grid item xs={10} sm={3}>
               {(() => {
                 const avatarSize = 150
-                const color = randomMaterialColor()
-                return <Avatar sx={{ width: avatarSize, height: avatarSize, fontSize: avatarSize - avatarSize / 3, margin: "auto", bgcolor: color }} />
+                return <Avatar sx={{ width: avatarSize, height: avatarSize, fontSize: avatarSize - avatarSize / 3, margin: "auto", bgcolor: avatarColor }} />
               })()}
             </Grid>
 

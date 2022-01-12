@@ -1,7 +1,7 @@
 import { ArrowBack, CalendarToday, Delete, Edit, Email, Language, LocationOn, Man, Note, Phone, Woman, Work } from "@mui/icons-material"
 import { Avatar, Divider, Grid, IconButton, Link, Theme, Tooltip, Typography } from "@mui/material"
 import { Box, SxProps } from "@mui/system"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { PersistentDrawer, PrimarySearchAppBar } from "../components"
 import { IContact } from "../utils/sharedInterfaces"
@@ -13,6 +13,8 @@ const ContactViewPage = () => {
   const [contact, setContact] = useState<IContact>()
   const [open, setOpen] = useState(false)
   const navigate = useNavigate()
+
+  const avatarColor = useMemo(() => randomMaterialColor(), [])
 
   const name = `${contact?.name_prefix || ""} ${contact?.given_name || ""} ${contact?.additional_name || ""} ${contact?.family_name || ""} ${contact?.name_suffix || ""}`
     .replace(/\s+/g, " ").trim()
@@ -82,8 +84,7 @@ const ContactViewPage = () => {
             <Grid item xs={9} sm={9} md={2} order={{ xs: 2, sm: 2 }}>
               {(() => {
                 const avatarSize = 150
-                const color = randomMaterialColor()
-                const sx = { width: avatarSize, height: avatarSize, fontSize: avatarSize - avatarSize / 3, margin: "auto", bgcolor: color }
+                const sx = { width: avatarSize, height: avatarSize, fontSize: avatarSize - avatarSize / 3, margin: "auto", bgcolor: avatarColor }
                 if (contact?.photo)
                   return <Avatar alt={name} src={contact?.photo} />
                 return <Avatar sx={sx}>{name[0]}</Avatar>
