@@ -1,4 +1,4 @@
-import { Box, Button, Grid, TextField, Typography } from "@mui/material"
+import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material"
 import { useState } from "react"
 const approve = require("approvejs")
 
@@ -74,123 +74,124 @@ const SignupPage = () => {
         left: '50%',
         top: '50%',
         transform: 'translate(-50%, -50%)'
-      }}>
-        <Typography variant="h5" sx={{ paddingBottom: '10px' }}>
-          Sign up
-        </Typography>
-        <Grid spacing={1} container>
-          <Grid item xs={12}>
-            <Typography color="error">{error}</Typography>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="First name"
-              variant="outlined"
-              type="text"
-              helperText={firstNameError}
-              onChange={e => { setFirstName(e.target.value) }}
-              error={!!firstNameError}
-              autoComplete="given-name"
-              onBlur={validateFirstName}
-              required
-              fullWidth />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Last name"
-              variant="outlined"
-              type="text"
-              helperText={lastNameError}
-              onChange={e => setLastName(e.target.value)}
-              error={!!lastNameError}
-              autoComplete="family-name"
-              onBlur={validateLastName}
-              required
-              fullWidth />
-          </Grid>
-          <Grid item xs={12} sm={12}>
-            <TextField
-              label="Email"
-              variant="outlined"
-              type="email"
-              helperText={emailError}
-              onChange={(e) => { setEmail(e.target.value) }}
-              error={!!emailError}
-              autoComplete="email"
-              onBlur={validateEmail}
-              required
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Password"
-              variant="outlined"
-              type="password"
-              helperText={passwordError}
-              onChange={(e) => { setPassword(e.target.value) }}
-              error={!!passwordError}
-              autoComplete="new-password"
-              onBlur={validatePassword}
-              required
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <TextField
-              label="Confirm Password"
-              variant="outlined"
-              type="password"
-              helperText={confirmPasswordError}
-              onChange={(e) => { setConfirmPassword(e.target.value) }}
-              error={!!confirmPasswordError}
-              autoComplete="new-password"
-              onBlur={validatePasswordConfirm}
-              required
-              fullWidth
-            />
-          </Grid>
-          <Grid item xs={12} sm={12}>
-            <Button
-              variant="contained"
-              onClick={async () => {
-                const firstNameError = validateFirstName()
-                const lastNameError = validateLastName()
-                const emailError = validateEmail()
-                const passwordError = validatePassword()
-                const confirmPasswordError = validatePasswordConfirm()
-                if (firstNameError || lastNameError || emailError || passwordError || confirmPasswordError) return
+      }}><Paper sx={{ padding: 3 }}>
+          <Typography variant="h5" sx={{ paddingBottom: '10px' }}>
+            Sign up
+          </Typography>
+          <Grid spacing={1} container>
+            <Grid item xs={12}>
+              <Typography color="error">{error}</Typography>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="First name"
+                variant="outlined"
+                type="text"
+                helperText={firstNameError}
+                onChange={e => { setFirstName(e.target.value) }}
+                error={!!firstNameError}
+                autoComplete="given-name"
+                onBlur={validateFirstName}
+                required
+                fullWidth />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Last name"
+                variant="outlined"
+                type="text"
+                helperText={lastNameError}
+                onChange={e => setLastName(e.target.value)}
+                error={!!lastNameError}
+                autoComplete="family-name"
+                onBlur={validateLastName}
+                required
+                fullWidth />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <TextField
+                label="Email"
+                variant="outlined"
+                type="email"
+                helperText={emailError}
+                onChange={(e) => { setEmail(e.target.value) }}
+                error={!!emailError}
+                autoComplete="email"
+                onBlur={validateEmail}
+                required
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Password"
+                variant="outlined"
+                type="password"
+                helperText={passwordError}
+                onChange={(e) => { setPassword(e.target.value) }}
+                error={!!passwordError}
+                autoComplete="new-password"
+                onBlur={validatePassword}
+                required
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Confirm Password"
+                variant="outlined"
+                type="password"
+                helperText={confirmPasswordError}
+                onChange={(e) => { setConfirmPassword(e.target.value) }}
+                error={!!confirmPasswordError}
+                autoComplete="new-password"
+                onBlur={validatePasswordConfirm}
+                required
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <Button
+                variant="contained"
+                onClick={async () => {
+                  const firstNameError = validateFirstName()
+                  const lastNameError = validateLastName()
+                  const emailError = validateEmail()
+                  const passwordError = validatePassword()
+                  const confirmPasswordError = validatePasswordConfirm()
+                  if (firstNameError || lastNameError || emailError || passwordError || confirmPasswordError) return
 
-                if (password !== confirmPassword) return setError("Passwords do not match")
+                  if (password !== confirmPassword) return setError("Passwords do not match")
 
-                try {
-                  const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
-                    method: 'post',
-                    mode: 'cors',
-                    headers: {
-                      'Content-Type': 'application/json;charset=UTF-8'
-                    },
-                    body: JSON.stringify({
-                      firstname: firstName,
-                      lastname: lastName,
-                      email,
-                      password
+                  try {
+                    const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
+                      method: 'post',
+                      mode: 'cors',
+                      headers: {
+                        'Content-Type': 'application/json;charset=UTF-8'
+                      },
+                      body: JSON.stringify({
+                        firstname: firstName,
+                        lastname: lastName,
+                        email,
+                        password
+                      })
                     })
-                  })
-                  const data = await response.json()
-                  if (response.status !== 201) setError(data.detail)
-                } catch (e: any) {
-                  setError(e.message)
-                }
-              }}
-              fullWidth>
-              Login
-            </Button>
-            <Button href="/login" sx={{ marginTop: '5px' }} variant="text" fullWidth>Already have an account?</Button>
+                    const data = await response.json()
+                    if (response.status !== 201) setError(data.detail)
+                  } catch (e: any) {
+                    setError(e.message)
+                  }
+                }}
+                fullWidth>
+                Login
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
+        </Paper>
+        <Button href="/login" sx={{ marginTop: 1 }} variant="text" fullWidth>Already have an account?</Button>
       </Box>
-    </div>
+    </div >
   )
 }
 

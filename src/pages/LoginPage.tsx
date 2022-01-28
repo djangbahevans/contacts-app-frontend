@@ -1,4 +1,4 @@
-import { Box, Button, Paper, Divider, Grid, TextField, Typography } from "@mui/material"
+import { Box, Button, Divider, Grid, Paper, TextField, Typography } from "@mui/material"
 import { useState } from "react"
 import { useAuth } from "../contexts"
 const approve = require("approvejs")
@@ -144,7 +144,7 @@ const LoginPage = () => {
                 onClick={async () => {
                   const error = validateForgotEmail()
                   if (error) return
-                  
+
                   try {
                     const response = await fetch(`${process.env.REACT_APP_API_URL}/password-reset`, {
                       method: 'post',
@@ -167,7 +167,7 @@ const LoginPage = () => {
             </Grid>
           </Grid>
         </Paper>
-        <Button href="/signup" variant="text" fullWidth>Don't have an account?</Button>
+        <Button sx={{ marginTop: 1 }} href="/signup" variant="text" fullWidth>Don't have an account?</Button>
       </Box>
     </div>
   )
