@@ -1,5 +1,6 @@
 import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material"
 import { useState } from "react"
+import { useAuth } from "../contexts"
 const approve = require("approvejs")
 
 const SignupPage = () => {
@@ -14,6 +15,8 @@ const SignupPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [confirmPasswordError, setConfirmPasswordError] = useState("")
   const [error, setError] = useState("")
+
+  const { login } = useAuth()
 
   const validateFirstName = () => {
     const rules = { title: 'First name', required: true }
@@ -179,6 +182,10 @@ const SignupPage = () => {
                     })
                     const data = await response.json()
                     if (response.status !== 201) setError(data.detail)
+                    else {
+                      await login(email, password)
+                      // localStorage.setItem("access_token", access_token)
+                    }
                   } catch (e: any) {
                     setError(e.message)
                   }
