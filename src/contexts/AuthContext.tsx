@@ -85,6 +85,8 @@ const useAuth = () => {
           })
           const data: ILogin = await response.json()
           if (response.status === 200) {
+            const { access_token } = data
+            localStorage.setItem("access_token", access_token)
             setAuthInfo({
               isAuthenticated: true,
               loading: false,

@@ -60,7 +60,7 @@ const LoginPage = () => {
           </Typography>
           <Grid container>
             <Grid item xs={12}>
-              <Typography color="error">{error}</Typography>
+              <Typography color="error" paragraph>{error}</Typography>
             </Grid>
             <Grid item xs={12}>
               <TextField
@@ -103,8 +103,8 @@ const LoginPage = () => {
                   if (passwordError || emailError) return
 
                   try {
-                    const { access_token } = await login(email, password)
-                    localStorage.setItem("access_token", access_token)
+                    await login(email, password)
+                    // localStorage.setItem("access_token", access_token)
                   } catch (error: any) {
                     setError(error.detail)
                   }
@@ -157,7 +157,8 @@ const LoginPage = () => {
                       })
                     })
                     const data = await response.json()
-                    if (response.status !== 201) setError(data.detail)
+                    if (response.status !== 200) setError(data.detail)
+                    else setError(data.data)
                   } catch (error: any) {
                     setError(error.message)
                   }
