@@ -78,7 +78,7 @@ const SignupPage = () => {
         top: '50%',
         transform: 'translate(-50%, -50%)'
       }}><Paper sx={{ padding: 3 }}>
-          <Typography variant="h5" sx={{ paddingBottom: '10px' }}>
+          <Typography align="center" variant="h5" sx={{ paddingBottom: '10px' }}>
             Sign up
           </Typography>
           <Grid spacing={1} container>
@@ -127,7 +127,7 @@ const SignupPage = () => {
             </Grid>
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Password"
+                label="New Password"
                 variant="outlined"
                 type="password"
                 helperText={passwordError}

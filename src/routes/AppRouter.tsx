@@ -1,6 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import { PrivateRoute, PublicRoute } from "."
-import { ContactCreatePage, ContactEditPage, ContactViewPage, HomePage, LoginPage, SignupPage } from "../pages"
+import { ContactCreatePage, ContactEditPage, ContactViewPage, HomePage, LoginPage, SignupPage, ResetPasswordPage } from "../pages"
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -12,6 +12,7 @@ const AppRouter = () => (
         <Route path="new" element={<PrivateRoute><ContactCreatePage /></PrivateRoute>} />
         <Route path="edit/:id" element={<PrivateRoute><ContactEditPage /></PrivateRoute>} />
         <Route path="person/:id" element={<PrivateRoute><ContactViewPage /></PrivateRoute>} />
+        <Route path="reset-password" element={<PublicRoute><ResetPasswordPage /></PublicRoute>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </div>

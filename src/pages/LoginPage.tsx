@@ -146,7 +146,7 @@ const LoginPage = () => {
                   if (error) return
 
                   try {
-                    const response = await fetch(`${process.env.REACT_APP_API_URL}/password-reset`, {
+                    const response = await fetch(`${process.env.REACT_APP_API_URL}/forgot-password`, {
                       method: 'post',
                       mode: 'cors',
                       headers: {
@@ -157,6 +157,7 @@ const LoginPage = () => {
                       })
                     })
                     const data = await response.json()
+                    console.log(data.data)
                     if (response.status !== 200) setError(data.detail)
                     else setError(data.data)
                   } catch (error: any) {
