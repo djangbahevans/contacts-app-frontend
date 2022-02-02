@@ -1,6 +1,9 @@
 import { KeyboardBackspace } from "@mui/icons-material"
-import { AlertTitle, Alert, Box, Button, Grid, Paper, TextField, Typography } from "@mui/material"
+import {Alert, Snackbar, Backdrop, Box, Button, CircularProgress, Grid, Paper, TextField, Typography } from "@mui/material"
 import { useState } from "react"
+import { useMutation } from "react-query"
+import { useNavigate } from "react-router-dom"
+import { updatePasswordByToken } from "../services/api"
 const approve = require("approvejs")
 
 const ResetPasswordPage = () => {
@@ -9,9 +12,10 @@ const ResetPasswordPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [confirmPasswordError, setConfirmPasswordError] = useState("")
   const [error, setError] = useState("")
+  const navigate = useNavigate()
 
   const queryParams = new URLSearchParams(window.location.search)
-  const user_id = queryParams.get("user_id")
+  const id = parseInt(queryParams.get("user_id")!)
   const token = queryParams.get("token")
 
   const validatePassword = () => {
@@ -34,8 +38,17 @@ const ResetPasswordPage = () => {
     return value
   }
 
+  const mutation = useMutation(updatePasswordByToken)
+
   return (
     <div style={{ position: 'relative', height: '100vh' }}>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={mutation.isLoading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+
       <Box sx={{
         maxWidth: '400px',
         minWidth: '250px',
@@ -86,27 +99,8 @@ const ResetPasswordPage = () => {
                   if (passwordError || confirmPasswordError) return
 
                   if (password !== confirmPassword) return setError("Passwords do not match")
-
-                  try {
-                    const response = await fetch(`${process.env.REACT_APP_API_URL}/users/${user_id}/reset-password`, {
-                      method: 'put',
-                      mode: 'cors',
-                      headers: {
-                        'Content-Type': 'application/json;charset=UTF-8'
-                      },
-                      body: JSON.stringify({
-                        password,
-                        token
-                      })
-                    })
-                    const data = await response.json()
-                    if (response.status !== 200) setError(data.detail)
-                    else {
-                        setError(data.data)
-                    }
-                  } catch (e: any) {
-                    setError(e.message)
-                  }
+                  
+                  mutation.mutateAsync({id, password, token: token!})
                 }}
                 fullWidth>
                 Change password
@@ -116,10 +110,16 @@ const ResetPasswordPage = () => {
         </Paper>
         <Button href="/login" sx={{ marginTop: 1 }} variant="text" fullWidth>{<KeyboardBackspace />} Back to login page?</Button>
       </Box>
-      {/* <Alert sx={{ bottom: 0 }} onClose={() => { }}>
-        <AlertTitle>Success</AlertTitle>
-        Password changed successfully
-      </Alert> */}
+      <Snackbar autoHideDuration={6000} open={mutation.isSuccess} onClose={() => { mutation.reset(); navigate('/') }}>
+        <Alert severity="success" sx={{ width: '100%' }} onClose={() => { mutation.reset(); navigate('/') }}>
+          Password changed successfully
+        </Alert>
+      </Snackbar>
+      <Snackbar autoHideDuration={6000} open={mutation.isError} onClose={() => { mutation.reset() }}>
+        <Alert severity="error" sx={{ width: '100%' }} onClose={() => { mutation.reset() }}>
+          Password change failed
+        </Alert>
+      </Snackbar>
     </div >
   )
 }

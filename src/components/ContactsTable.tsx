@@ -1,9 +1,11 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { Box, Checkbox, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Toolbar, Tooltip, Typography } from "@mui/material";
+import { AlertTitle, Alert, Box, Checkbox, IconButton, Paper, Skeleton, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Toolbar, Tooltip, Typography } from "@mui/material";
 import { alpha } from '@mui/material/styles';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useQuery } from 'react-query';
 import { ContactRow } from ".";
+import { getContacts } from '../services/api';
 import { IContact } from "../utils/sharedInterfaces";
 
 interface IContactsTableProps {
@@ -124,29 +126,16 @@ const ContactsTableToolbar = (props: IContactsTableToolbarProps) => {
 };
 
 export default function ContactsTable() {
+  const rowsPerPageOptions = [10, 50, 100]
   const [selected, setSelected] = useState<readonly number[]>([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const [rows, setRows] = useState<IContact[]>([])
+  const [rowsPerPage, setRowsPerPage] = useState(Math.min(...rowsPerPageOptions));
 
-  useEffect(() => {
-    (async () => {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/contacts`, {
-        method: 'get',
-        mode: "cors",
-        headers: {
-          "authorization": `Bearer ${localStorage.getItem("access_token")}`
-        }
-      })
-      const data: IContact[] = await response.json()
-
-      setRows(data)
-    })()
-  }, [])
+  const { data, error, isError, isLoading } = useQuery<IContact[], Error>('contacts', getContacts)
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = rows.map((n) => n.id);
+      const newSelecteds = data!.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -186,8 +175,15 @@ export default function ContactsTable() {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data!.length) : 0;
 
+  if (isLoading)
+    return <Skeleton variant="rectangular" sx={{ width: "95vw", height: "60vh", margin: "0 auto" }} />
+  if (isError)
+    <Alert severity='error'>
+      <AlertTitle>Error</AlertTitle>
+      {error}
+    </Alert>
   return (
     <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2 }}>
@@ -201,10 +197,10 @@ export default function ContactsTable() {
             <ContactsTableHead
               numSelected={selected.length}
               onSelectAllClick={handleSelectAllClick}
-              rowCount={rows.length}
+              rowCount={data!.length}
             />
             <TableBody>
-              {rows.slice()
+              {data!.slice()
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.id);
@@ -226,9 +222,9 @@ export default function ContactsTable() {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={rowsPerPageOptions}
           component="div"
-          count={rows.length}
+          count={data!.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

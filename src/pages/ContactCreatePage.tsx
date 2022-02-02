@@ -1,40 +1,24 @@
 import { ArrowBack, CalendarToday, Email, Language, LocationOn, Note, Person, Phone, Save, Wc, Work } from "@mui/icons-material"
-import { Avatar, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Tooltip, Typography } from "@mui/material"
+import { Alert, Avatar, Backdrop, CircularProgress, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Snackbar, Tooltip, Typography } from "@mui/material"
 import { Box } from "@mui/system"
 import { useMemo, useState } from "react"
+import { useMutation } from "react-query"
 import { useNavigate } from "react-router-dom"
 import { ClearTextField, PersistentDrawer, PrimarySearchAppBar } from "../components"
-import { IContactCreate } from "../utils/sharedInterfaces"
+import { createContact } from "../services/api"
+import { contactDefaults, IContactCreate } from "../utils/sharedInterfaces"
 import { randomMaterialColor } from "../utils/utilityFunctions"
 
 
 const ContactCreatePage = () => {
-  const contactDefaults: IContactCreate = {
-    given_name: "",
-    additional_name: "",
-    family_name: "",
-    name_prefix: "",
-    name_suffix: "",
-    birthday: "",
-    gender: "",
-    location: "",
-    occupation: "",
-    notes: "",
-    photo: "",
-    email: "",
-    phone1: "",
-    phone2: "",
-    organization: "",
-    website: "",
-  }
-
   const [contact, setContact] = useState<IContactCreate>(contactDefaults)
   const [open, setOpen] = useState(false)
+  const [id, setId] = useState<number | null>(null)
   const navigate = useNavigate()
 
-  const avatarColor = useMemo(() => randomMaterialColor(), []);
+  const mutation = useMutation(createContact, { onSuccess: (response) => { setId(response.id) } })
 
-  const token = localStorage.getItem("access_token");
+  const avatarColor = useMemo(() => randomMaterialColor(), []);
 
   const swapDrawerState = () => {
     setOpen(!open)
@@ -45,46 +29,35 @@ const ContactCreatePage = () => {
   }
 
   const saveHandler = async () => {
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/contacts/`, {
-        method: "post",
-        mode: "cors",
-        headers: {
-          "authorization": `Bearer ${token}`,
-          'Content-Type': 'application/json;charset=UTF-8'
-        },
-        body: JSON.stringify({
-          given_name: contact.given_name || undefined,
-          additional_name: contact.additional_name || undefined,
-          family_name: contact.family_name || undefined,
-          name_prefix: contact.name_prefix || undefined,
-          name_suffix: contact.name_suffix || undefined,
-          birthday: contact.birthday || undefined,
-          gender: contact.gender || undefined,
-          location: contact.location || undefined,
-          occupation: contact.occupation || undefined,
-          notes: contact.notes || undefined,
-          photo: contact.photo || undefined,
-          email: contact.email || undefined,
-          phone1: contact.phone1 || undefined,
-          phone2: contact.phone2 || undefined,
-          organization: contact.organization || undefined,
-          website: contact.website || undefined,
-        })
-      })
-      const data = await response.json()
-      if (response.status === 200)
-        navigate(`/person/${data.id}`)
-      else
-        // TODO: Add visible error to screen
-        alert(data.detail)
-    } catch (e: any) {
-      alert(e.message)
-    }
+    mutation.mutateAsync({
+      given_name: contact.given_name || undefined,
+      additional_name: contact.additional_name || undefined,
+      family_name: contact.family_name || undefined,
+      name_prefix: contact.name_prefix || undefined,
+      name_suffix: contact.name_suffix || undefined,
+      birthday: contact.birthday || undefined,
+      gender: contact.gender || undefined,
+      location: contact.location || undefined,
+      occupation: contact.occupation || undefined,
+      notes: contact.notes || undefined,
+      photo: contact.photo || undefined,
+      email: contact.email || undefined,
+      phone1: contact.phone1 || undefined,
+      phone2: contact.phone2 || undefined,
+      organization: contact.organization || undefined,
+      website: contact.website || undefined
+    })
   }
 
   return (
     <>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={mutation.isLoading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+
       <PrimarySearchAppBar handleMenuClick={swapDrawerState} open={open} />
       <PersistentDrawer handleDrawerClose={handleDrawerClose} open={open}>
         <Box sx={{ my: 3 }}>
@@ -273,6 +246,16 @@ const ContactCreatePage = () => {
           </Box>
         </Box>
       </PersistentDrawer>
+      <Snackbar autoHideDuration={6000} open={mutation.isSuccess} onClose={() => { mutation.reset(); navigate(`/person/${id}`) }}>
+        <Alert severity="success" sx={{ width: '100%' }} onClose={() => { mutation.reset(); navigate(`/person/${id}`) }}>
+          Contact created successfully
+        </Alert>
+      </Snackbar>
+      <Snackbar autoHideDuration={6000} open={mutation.isError} onClose={() => { mutation.reset() }}>
+        <Alert severity="error" sx={{ width: '100%' }} onClose={() => { mutation.reset() }}>
+          Contact creation failed
+        </Alert>
+      </Snackbar>
     </>
   )
 }

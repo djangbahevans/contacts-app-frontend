@@ -1,11 +1,13 @@
 import { ArrowBack, CalendarToday, Email, Language, LocationOn, Note, Person, Phone, Save, Wc, Work } from "@mui/icons-material"
-import { Avatar, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Tooltip, Typography } from "@mui/material"
+import { Alert, Avatar, Backdrop, CircularProgress, Divider, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Snackbar, Tooltip, Typography } from "@mui/material"
 import { Box } from "@mui/system"
-import { useEffect, useState, useMemo } from "react"
+import { useMemo, useState } from "react"
+import { useMutation, useQuery } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import { ClearTextField, PersistentDrawer, PrimarySearchAppBar } from "../components"
+import { getContactsById, updateContact } from "../services/api"
 import { IContactCreate } from "../utils/sharedInterfaces"
-import { randomMaterialColor } from "../utils/utilityFunctions"
+import { randomMaterialColor, replaceValues } from "../utils/utilityFunctions"
 
 const ContactEditPage = () => {
   const contactDefaults: IContactCreate = {
@@ -34,26 +36,14 @@ const ContactEditPage = () => {
 
   const avatarColor = useMemo(() => randomMaterialColor(), []);
 
-  const token = localStorage.getItem("access_token");
+  useQuery(['contactById', id], () => getContactsById(parseInt(id!)), {
+    onSuccess: (data) => {
+      const clone: IContactCreate = replaceValues(JSON.parse(JSON.stringify(data)), null, "")
+      setContact(clone)
+    }
+  })
 
-  useEffect(() => {
-    (async () => {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/contacts/${id}`, {
-        method: "get",
-        mode: "cors",
-        headers: {
-          "authorization": `Bearer ${token}`,
-          'Content-Type': 'application/json;charset=UTF-8'
-        }
-      })
-      const data = await response.json()
-      if (response.status === 200) {
-        Object.keys(data).forEach((k) => data[k] == null && delete data[k]);
-        setContact(c => ({ ...c, ...data }))
-      }
-      else alert("Could not fetch the data")
-    })()
-  }, [token, id])
+  const mutation = useMutation(updateContact)
 
   const swapDrawerState = () => {
     setOpen(!open)
@@ -64,46 +54,38 @@ const ContactEditPage = () => {
   }
 
   const saveHandler = async () => {
-    try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/contacts/${id}`, {
-        method: "put",
-        mode: "cors",
-        headers: {
-          "authorization": `Bearer ${token}`,
-          'Content-Type': 'application/json;charset=UTF-8'
-        },
-        body: JSON.stringify({
-          given_name: contact.given_name || undefined,
-          additional_name: contact.additional_name || undefined,
-          family_name: contact.family_name || undefined,
-          name_prefix: contact.name_prefix || undefined,
-          name_suffix: contact.name_suffix || undefined,
-          birthday: contact.birthday || undefined,
-          gender: contact.gender || undefined,
-          location: contact.location || undefined,
-          occupation: contact.occupation || undefined,
-          notes: contact.notes || undefined,
-          photo: contact.photo || undefined,
-          email: contact.email || undefined,
-          phone1: contact.phone1 || undefined,
-          phone2: contact.phone2 || undefined,
-          organization: contact.organization || undefined,
-          website: contact.website || undefined,
-        })
-      })
-      const data = await response.json()
-      if (response.status === 200)
-        navigate(`/person/${data.id}`)
-      else
-        // TODO: Add visible error to screen
-        alert(data.detail)
-    } catch (e: any) {
-      alert(e.message)
-    }
+    mutation.mutateAsync({
+      id: parseInt(id!),
+      contact: replaceValues({
+        given_name: contact.given_name,
+        additional_name: contact.additional_name,
+        family_name: contact.family_name,
+        name_prefix: contact.name_prefix,
+        name_suffix: contact.name_suffix,
+        birthday: contact.birthday,
+        gender: contact.gender,
+        location: contact.location,
+        occupation: contact.occupation,
+        notes: contact.notes,
+        photo: contact.photo,
+        email: contact.email,
+        phone1: contact.phone1,
+        phone2: contact.phone2,
+        organization: contact.organization,
+        website: contact.website,
+      }, "", null)
+    })
   }
 
   return (
     <>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={mutation.isLoading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+
       <PrimarySearchAppBar handleMenuClick={swapDrawerState} open={open} />
       <PersistentDrawer handleDrawerClose={handleDrawerClose} open={open}>
         <Box sx={{ my: 3 }}>
@@ -292,6 +274,16 @@ const ContactEditPage = () => {
           </Box>
         </Box>
       </PersistentDrawer>
+      <Snackbar autoHideDuration={6000} open={mutation.isSuccess} onClose={() => { mutation.reset() }}>
+        <Alert severity="success" sx={{ width: '100%' }} onClose={() => { mutation.reset() }}>
+          Contact modified successfully
+        </Alert>
+      </Snackbar>
+      <Snackbar autoHideDuration={6000} open={mutation.isError} onClose={() => { mutation.reset() }}>
+        <Alert severity="error" sx={{ width: '100%' }} onClose={() => { mutation.reset() }}>
+          Contact modification failed
+        </Alert>
+      </Snackbar>
     </>
   )
 }

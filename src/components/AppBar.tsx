@@ -3,6 +3,7 @@ import { Box, IconButton, InputBase, Menu, MenuItem, Toolbar, Tooltip, Typograph
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
 import { alpha, styled } from '@mui/material/styles';
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts';
 
 interface AppBarProps extends MuiAppBarProps {
@@ -71,6 +72,7 @@ const AppBar = styled(MuiAppBar, {
 
 const PrimarySearchAppBar = ({ handleMenuClick, open }: AppBarProps) => {
   const { logout } = useAuth()
+  const navigate = useNavigate()
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
 
@@ -157,7 +159,8 @@ const PrimarySearchAppBar = ({ handleMenuClick, open }: AppBarProps) => {
             variant="h6"
             noWrap
             component="div"
-            sx={{ display: { xs: 'none', sm: 'block' } }}
+            sx={{ display: { xs: 'none', sm: 'block' }, '&:hover': { cursor: 'pointer' } }}
+            onClick={() => { navigate('/') }}
           >
             Contacts
           </Typography>

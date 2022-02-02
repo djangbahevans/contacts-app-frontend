@@ -1,6 +1,9 @@
-import { Box, Button, Divider, Grid, Paper, TextField, Typography } from "@mui/material"
+import { Alert, Backdrop, Box, Button, CircularProgress, Divider, Grid, Paper, Snackbar, TextField, Typography } from "@mui/material"
 import { useState } from "react"
+import { useMutation } from "react-query"
 import { useAuth } from "../contexts"
+import { forgotPassword } from "../services/api"
+import { IError } from "../utils/sharedInterfaces"
 const approve = require("approvejs")
 
 const LoginPage = () => {
@@ -44,8 +47,22 @@ const LoginPage = () => {
     return value
   }
 
+  const loginMutation = useMutation(login)
+  const forgotPasswordMutation = useMutation(forgotPassword, {
+    onError: (data) => {
+      setError((data as IError).detail)
+    }
+  })
+  console.log("Forgot password", forgotPasswordMutation.isError)
+  console.log("Login", loginMutation.isError)
   return (
     <div style={{ position: 'relative', height: '100vh' }}>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={loginMutation.isLoading || forgotPasswordMutation.isLoading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Box sx={{
         maxWidth: '400px',
         minWidth: '250px',
@@ -102,12 +119,7 @@ const LoginPage = () => {
                   const passwordError = validatePassword()
                   if (passwordError || emailError) return
 
-                  try {
-                    await login(email, password)
-                    // localStorage.setItem("access_token", access_token)
-                  } catch (error: any) {
-                    setError(error.detail)
-                  }
+                  loginMutation.mutateAsync({ email, password })
                 }}
                 fullWidth>
                 Login
@@ -145,24 +157,7 @@ const LoginPage = () => {
                   const error = validateForgotEmail()
                   if (error) return
 
-                  try {
-                    const response = await fetch(`${process.env.REACT_APP_API_URL}/forgot-password`, {
-                      method: 'post',
-                      mode: 'cors',
-                      headers: {
-                        'Content-Type': 'application/json;charset=UTF-8'
-                      },
-                      body: JSON.stringify({
-                        email: forgotEmail
-                      })
-                    })
-                    const data = await response.json()
-                    console.log(data.data)
-                    if (response.status !== 200) setError(data.detail)
-                    else setError(data.data)
-                  } catch (error: any) {
-                    setError(error.message)
-                  }
+                  await forgotPasswordMutation.mutateAsync(forgotEmail)
                 }}
                 fullWidth>
                 Reset my password</Button>
@@ -171,6 +166,21 @@ const LoginPage = () => {
         </Paper>
         <Button sx={{ marginTop: 1 }} href="/signup" variant="text" fullWidth>Don't have an account?</Button>
       </Box>
+      <Snackbar autoHideDuration={6000} open={loginMutation.isError} onClose={() => { loginMutation.reset() }}>
+        <Alert severity="error" sx={{ width: '100%' }} onClose={() => { loginMutation.reset() }}>
+          {loginMutation.error ? (loginMutation.error as Error)?.message : ""}
+        </Alert>
+      </Snackbar>
+      <Snackbar autoHideDuration={6000} open={forgotPasswordMutation.isError} onClose={() => { forgotPasswordMutation.reset() }}>
+        <Alert severity="error" sx={{ width: '100%' }} onClose={() => { forgotPasswordMutation.reset() }}>
+          {forgotPasswordMutation.error ? (forgotPasswordMutation.error as Error)?.message : ""}
+        </Alert>
+      </Snackbar>
+      <Snackbar autoHideDuration={6000} open={forgotPasswordMutation.isSuccess} onClose={() => { forgotPasswordMutation.reset() }}>
+        <Alert severity="success" sx={{ width: '100%' }} onClose={() => { forgotPasswordMutation.reset() }}>
+          {forgotPasswordMutation.isSuccess ? (forgotPasswordMutation.data)?.data : ""}
+        </Alert>
+      </Snackbar>
     </div>
   )
 }

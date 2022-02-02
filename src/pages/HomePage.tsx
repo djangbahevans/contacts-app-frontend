@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { ContactsTable, PersistentDrawer, PrimarySearchAppBar } from "../components"
 
+
 const HomePage = () => {
   const swapDrawerState = () => {
     setOpen(!open)

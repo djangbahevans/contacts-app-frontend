@@ -1,9 +1,11 @@
 import { ArrowBack, CalendarToday, Delete, Edit, Email, Language, LocationOn, Man, Note, Phone, Woman, Work } from "@mui/icons-material"
-import { Avatar, Divider, Grid, IconButton, Link, Theme, Tooltip, Typography } from "@mui/material"
+import { Alert, Avatar, Backdrop, CircularProgress, Divider, Grid, IconButton, Link, Snackbar, Theme, Tooltip, Typography } from "@mui/material"
 import { Box, SxProps } from "@mui/system"
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
+import { useMutation, useQuery } from "react-query"
 import { useNavigate, useParams } from "react-router-dom"
 import { PersistentDrawer, PrimarySearchAppBar } from "../components"
+import { deleteContact, getContactsById } from "../services/api"
 import { IContact } from "../utils/sharedInterfaces"
 import { randomMaterialColor } from "../utils/utilityFunctions"
 
@@ -19,22 +21,13 @@ const ContactViewPage = () => {
   const name = `${contact?.name_prefix || ""} ${contact?.given_name || ""} ${contact?.additional_name || ""} ${contact?.family_name || ""} ${contact?.name_suffix || ""}`
     .replace(/\s+/g, " ").trim()
 
-  const token = localStorage.getItem("access_token");
-
-  useEffect(() => {
-    (async () => {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/contacts/${id}`, {
-        method: "get",
-        mode: "cors",
-        headers: {
-          "authorization": `Bearer ${token}`
-        }
-      })
-      const data: IContact = await response.json()
-
+  useQuery(['contactById', id], () => getContactsById(parseInt(id!)), {
+    onSuccess: (data) => {
       setContact(data)
-    })()
-  }, [id, token])
+    }
+  })
+
+  const mutation = useMutation(deleteContact)
 
   const swapDrawerState = () => {
     setOpen(!open)
@@ -44,31 +37,17 @@ const ContactViewPage = () => {
     setOpen(false)
   }
 
-  const deleteHandler = async () => {
-    try {
-
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/contacts/${id}`, {
-        method: "delete",
-        mode: "cors",
-        headers: {
-          "authorization": `Bearer ${token}`
-        }
-      })
-      if (response.status === 204)
-        navigate(-1)
-      else {
-        const data = await response.json()
-        // TODO: Add visible error to screen
-        alert(data.detail)
-      }
-    }
-    catch (e: any) {
-      alert(e.message)
-    }
-  }
+  const deleteHandler = () => { mutation.mutateAsync(parseInt(id!)) }
 
   return (
     <>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={mutation.isLoading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+
       <PrimarySearchAppBar handleMenuClick={swapDrawerState} open={open} />
       <PersistentDrawer handleDrawerClose={handleDrawerClose} open={open}>
         <Box sx={{ my: 3 }}>
@@ -202,6 +181,16 @@ const ContactViewPage = () => {
           </Box>
         </Box>
       </PersistentDrawer>
+      <Snackbar autoHideDuration={6000} open={mutation.isSuccess} onClose={() => { mutation.reset(); navigate(-1) }}>
+        <Alert severity="success" sx={{ width: '100%' }} onClose={() => { mutation.reset(); navigate(-1) }}>
+          Contact deleted
+        </Alert>
+      </Snackbar>
+      <Snackbar autoHideDuration={6000} open={mutation.isError} onClose={() => { mutation.reset() }}>
+        <Alert severity="error" sx={{ width: '100%' }} onClose={() => { mutation.reset() }}>
+          Contact deletion failed
+        </Alert>
+      </Snackbar>
     </>
   )
 }

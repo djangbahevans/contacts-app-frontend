@@ -1,6 +1,9 @@
-import { Box, Button, Grid, Paper, TextField, Typography } from "@mui/material"
+import { Alert, Backdrop, Box, Button, CircularProgress, Grid, Paper, Snackbar, TextField, Typography } from "@mui/material"
 import { useState } from "react"
+import { useMutation } from "react-query"
 import { useAuth } from "../contexts"
+import { createUser } from "../services/api"
+import { IError } from "../utils/sharedInterfaces"
 const approve = require("approvejs")
 
 const SignupPage = () => {
@@ -68,8 +71,16 @@ const SignupPage = () => {
     return value
   }
 
+  const mutation = useMutation(createUser, { onSuccess: () => { login({email, password}) } })
+
   return (
     <div style={{ position: 'relative', height: '100vh' }}>
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        open={mutation.isLoading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
       <Box sx={{
         maxWidth: '400px',
         minWidth: '250px',
@@ -166,38 +177,27 @@ const SignupPage = () => {
 
                   if (password !== confirmPassword) return setError("Passwords do not match")
 
-                  try {
-                    const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
-                      method: 'post',
-                      mode: 'cors',
-                      headers: {
-                        'Content-Type': 'application/json;charset=UTF-8'
-                      },
-                      body: JSON.stringify({
-                        firstname: firstName,
-                        lastname: lastName,
-                        email,
-                        password
-                      })
-                    })
-                    const data = await response.json()
-                    if (response.status !== 201) setError(data.detail)
-                    else {
-                      await login(email, password)
-                      // localStorage.setItem("access_token", access_token)
-                    }
-                  } catch (e: any) {
-                    setError(e.message)
-                  }
+                  mutation.mutateAsync({
+                    firstname: firstName,
+                    lastname: lastName,
+                    email,
+                    password
+                  })
+
                 }}
                 fullWidth>
-                Login
+                Create account
               </Button>
             </Grid>
           </Grid>
         </Paper>
         <Button href="/login" sx={{ marginTop: 1 }} variant="text" fullWidth>Already have an account?</Button>
       </Box>
+      <Snackbar autoHideDuration={6000} open={mutation.isError} onClose={() => { mutation.reset() }}>
+        <Alert severity="error" sx={{ width: '100%' }} onClose={() => { mutation.reset() }}>
+          {mutation.error ? (mutation.error as IError).detail : ""}
+        </Alert>
+      </Snackbar>
     </div >
   )
 }

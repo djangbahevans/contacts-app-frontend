@@ -12,3 +12,10 @@ export const randomMaterialColor = () => {
   const randomValue = colorProps[Math.floor(Math.random() * colorProps.length)]
   return randomColor[randomValue]
 }
+
+export const replaceValues = (obj: any, old_val: any, new_val: any) => {
+  for (const property in obj)
+    obj[property] = obj[property] === old_val ? new_val : obj[property]
+
+  return obj
+}
