@@ -1,9 +1,12 @@
-import { IContact, IContactCreate, IError, IForgotPasswordResponse, ILoginResponse, ILoginVariables, IUpdateContactVariables, IUpdatePasswordVariables, IUpdateUserVariables, IUser, IUserCreate } from "../utils/sharedInterfaces"
+import { IContact, IContactCreate, IError, IForgotPasswordResponse, ILoginResponse, ILoginVariables, IPaginateResponse, IUpdateContactVariables, IUpdatePasswordVariables, IUpdateUserVariables, IUser, IUserCreate } from "../utils/sharedInterfaces"
 
 
 // CONTACTS CRUD
-export const getContacts = async (): Promise<IContact[]> => {
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/contacts`, {
+export const getContacts = async (queryKey: any): Promise<IPaginateResponse<IContact[]>> => {
+  const page: number = queryKey["queryKey"][1]
+  const rowsPerPage: number = queryKey["queryKey"][2]
+
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/contacts?page=${page}&per_page=${rowsPerPage}`, {
     method: 'get',
     mode: "cors",
     headers: {
@@ -11,11 +14,13 @@ export const getContacts = async (): Promise<IContact[]> => {
     }
   })
 
+  const count = parseInt(response.headers.get("x-total-count")!)
+
   const data: IContact[] | IError = await response.json()
   if ("detail" in data)
     throw new Error(data.detail)
 
-  return data
+  return { count, data }
 }
 
 export const getContactsById = async (id: number): Promise<IContact> => {

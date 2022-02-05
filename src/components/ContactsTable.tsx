@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { ContactRow } from ".";
 import { getContacts } from '../services/api';
-import { IContact } from "../utils/sharedInterfaces";
+import { IContact, IPaginateResponse } from "../utils/sharedInterfaces";
 
 interface IContactsTableProps {
   numSelected: number;
@@ -131,11 +131,12 @@ export default function ContactsTable() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(Math.min(...rowsPerPageOptions));
 
-  const { data, error, isError, isLoading } = useQuery<IContact[], Error>('contacts', getContacts)
+  const { data, error, isError, isLoading } = useQuery<IPaginateResponse<IContact[]>, Error>(['contacts', page, rowsPerPage], getContacts)
+  const contacts = data?.data
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelecteds = data!.map((n) => n.id);
+      const newSelecteds = contacts!.map((n) => n.id);
       setSelected(newSelecteds);
       return;
     }
@@ -173,10 +174,6 @@ export default function ContactsTable() {
 
   const isSelected = (id: number) => selected.indexOf(id) !== -1;
 
-  // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data!.length) : 0;
-
   if (isLoading)
     return <Skeleton variant="rectangular" sx={{ width: "95vw", height: "60vh", margin: "0 auto" }} />
   if (isError)
@@ -197,11 +194,11 @@ export default function ContactsTable() {
             <ContactsTableHead
               numSelected={selected.length}
               onSelectAllClick={handleSelectAllClick}
-              rowCount={data!.length}
+              rowCount={contacts!.length}
             />
             <TableBody>
-              {data!.slice()
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              {contacts!.slice()
+                // .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
                   const isItemSelected = isSelected(row.id);
 
@@ -209,22 +206,13 @@ export default function ContactsTable() {
                     <ContactRow key={row.id} handleClick={handleClick} contact={row} isSelected={isItemSelected} />
                   );
                 })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: 53 * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
             </TableBody>
           </Table>
         </TableContainer>
         <TablePagination
           rowsPerPageOptions={rowsPerPageOptions}
           component="div"
-          count={data!.length}
+          count={data!.count}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

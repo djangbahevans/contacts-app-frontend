@@ -53,8 +53,7 @@ const LoginPage = () => {
       setError((data as IError).detail)
     }
   })
-  console.log("Forgot password", forgotPasswordMutation.isError)
-  console.log("Login", loginMutation.isError)
+
   return (
     <div style={{ position: 'relative', height: '100vh' }}>
       <Backdrop
