@@ -27,7 +27,10 @@ const ContactRow = ({ contact, isSelected, handleClick }: IContactRowProps) => {
     >
       <TableCell padding="checkbox">
         <Checkbox
-          onClick={event => handleClick(event, contact.id)}
+          onClick={event => {
+            event.stopPropagation()
+            handleClick(event, contact.id)
+          }}
           color="primary"
           checked={isSelected}
           inputProps={{

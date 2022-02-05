@@ -75,6 +75,37 @@ const PersistentDrawer = ({ open, handleDrawerClose, children }: IDrawerProps) =
             <ListItemText primary="Create contact" />
           </ListItem>
         </List>
+        <List>
+          <ListItem button onClick={() => {
+            const input = document.createElement("input")
+            input.type = "file"
+            input.multiple = false
+            input.accept = ".csv"
+
+            input.onchange = _ => {
+              if (input.files) {
+                const formData = new FormData()
+                formData.append("file", input.files[0])
+
+                fetch(`${process.env.REACT_APP_API_URL}/contacts/from-file`, {
+                  method: 'post',
+                  mode: 'cors',
+                  headers: {
+                    "authorization": `Bearer ${localStorage.getItem("access_token")}`
+                  },
+                  body: formData
+                })
+              }
+            };
+
+            input.click()
+          }}>
+            <ListItemIcon>
+              <Add />
+            </ListItemIcon>
+            <ListItemText primary="Create from CSV" />
+          </ListItem>
+        </List>
       </Drawer>
       <Main open={open}>
         {/* <DrawerHeader /> */}
