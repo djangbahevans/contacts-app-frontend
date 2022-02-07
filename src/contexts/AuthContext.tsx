@@ -1,5 +1,6 @@
-import { createContext, useContext, useEffect, useState } from "react"
-import { login as loginResponse } from "../services/api"
+import { createContext, useContext, useState } from "react"
+import { useQuery } from "react-query"
+import { getUsers, login as loginResponse } from "../services/api"
 import { authContextDefaults, IAuthContext, ILoginVariables, IUser } from "../utils/sharedInterfaces"
 
 
@@ -8,36 +9,35 @@ const authContext = createContext<IAuthContext>(authContextDefaults)
 const useAuth = () => {
   const [authInfo, setAuthInfo] = useState<{ isAuthenticated: boolean, loading: boolean, user?: IUser }>({ isAuthenticated: false, loading: true })
 
-  useEffect(() => {
-    const token = localStorage.getItem("access_token")
-    if (!token) {
-      setAuthInfo({ isAuthenticated: false, loading: false })
-      return
-    }
-
-    (async () => {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/users`, {
-        method: 'get',
-        mode: 'cors',
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
+  useQuery("users", getUsers, {
+    onSuccess: (data) => {
+      setAuthInfo({
+        isAuthenticated: true,
+        loading: false,
+        user: data
       })
+    },
+    onError: () => {
+      const token = localStorage.getItem("access_token")
+      if (!token) {
+        setAuthInfo({ isAuthenticated: false, loading: false })
+        return
+      }
 
-      const data: IUser = await response.json()
-      if (response.status === 200)
-        setAuthInfo({
-          isAuthenticated: true,
-          loading: false,
-          user: data
-        })
-      else
-        setAuthInfo({
-          isAuthenticated: false,
-          loading: false
-        })
-    })()
-  }, [])
+      setAuthInfo({
+        isAuthenticated: false, loading: true
+      })
+    },
+    retry: (failureCount, error): boolean => {
+      const token = localStorage.getItem("access_token")
+      if (!token) {
+        setAuthInfo({ isAuthenticated: false, loading: false })
+        return false
+      }
+
+      return true
+    }
+  })
 
   return {
     ...authInfo,
