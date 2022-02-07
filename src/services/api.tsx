@@ -58,6 +58,20 @@ export const createContact = async (contact: IContactCreate): Promise<IContact> 
   return data
 }
 
+export const createContactsFromFile = async (formData: FormData) => {
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/contacts/from-file`, {
+    method: 'post',
+    mode: 'cors',
+    headers: {
+      "authorization": `Bearer ${localStorage.getItem("access_token")}`
+    },
+    body: formData
+  })
+
+  if (response.status !== 202)
+    throw new Error()
+}
+
 export const updateContact = async ({ id, contact }: IUpdateContactVariables): Promise<IContact> => {
   const response = await fetch(`${process.env.REACT_APP_API_URL}/contacts/${id}`, {
     method: "put",
@@ -235,4 +249,3 @@ export const login = async ({ email, password }: ILoginVariables) => {
   return data
 
 }
-

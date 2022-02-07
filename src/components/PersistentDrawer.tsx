@@ -2,7 +2,9 @@ import { Add, ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { Box, CssBaseline, Divider, Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import { ReactNode } from 'react';
+import { useQueryClient, useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+import { createContactsFromFile } from '../services/api';
 
 const drawerWidth = 240;
 
@@ -44,6 +46,13 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 const PersistentDrawer = ({ open, handleDrawerClose, children }: IDrawerProps) => {
   const theme = useTheme();
   const navigate = useNavigate()
+
+  const queryClient = useQueryClient()
+  const mutation = useMutation(createContactsFromFile, {
+    onSuccess: () => {
+      setTimeout(() => queryClient.invalidateQueries("contacts"), 2000)
+    }
+  })
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -87,14 +96,7 @@ const PersistentDrawer = ({ open, handleDrawerClose, children }: IDrawerProps) =
                 const formData = new FormData()
                 formData.append("file", input.files[0])
 
-                fetch(`${process.env.REACT_APP_API_URL}/contacts/from-file`, {
-                  method: 'post',
-                  mode: 'cors',
-                  headers: {
-                    "authorization": `Bearer ${localStorage.getItem("access_token")}`
-                  },
-                  body: formData
-                })
+                mutation.mutateAsync(formData)
               }
             };
 
